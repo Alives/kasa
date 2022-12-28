@@ -1,0 +1,11 @@
+[Unit]
+Description=Kasa Smartplug Tracker Service
+After=networking.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/kasa/plug_tracker.py --leader 10.0.0.37 --follower 10.0.0.31
+Restart=on-failure
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target
