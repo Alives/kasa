@@ -10,7 +10,7 @@ import time
 from struct import pack
 
 sys.path.append('/opt/repos/mypylib')
-from mypylib import setup_logging, write_graphite
+from mypylib import setup_logging, write_graphite_entries
 
 
 def encrypt(string):
@@ -72,7 +72,7 @@ while True:
     sock = setup_socket(args.smartplug)
   data = []
   for k,v in emeter.items():
-    data.append((f'smartplug_power.computer.{k}', v))
-  write_graphite(data)
-  logging.info('Wrote %d metrics to graphite.', len(data))
-  time.sleep(10)
+    data.append(f'smartplug_power.computer.{k} {v} -1.')
+  logging.info(data)
+  write_graphite_entries(data)
+  time.sleep(1)
