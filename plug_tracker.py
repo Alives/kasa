@@ -131,6 +131,7 @@ while True:
                  seconds_until_ignore_end)
     time.sleep(seconds_until_ignore_end)
     logging.info('Ignore period is over, resuming operations.')
+    prev_state = -1
 
   try:
     relay_state = query_smartplug(sock)
