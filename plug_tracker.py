@@ -27,7 +27,7 @@ def seconds_until_next(end_time, current_time):
   else:
     next_timestamp = datetime.combine(
         current_datetime.date() + timedelta(days=1), end_time)
-  return int((next_timestamp - current_datetime).total_seconds()) + 60
+  return int((next_timestamp - current_datetime).total_seconds()) + 1
 
 
 def encrypt(string):
@@ -106,14 +106,15 @@ ignore_start = parse_time(args.ignore_start)
 ignore_stop = parse_time(args.ignore_stop)
 
 while True:
+  logging.info('Connecting to leader smartplug (%s)', args.leader)
   try:
     sock = setup_socket(args.leader)
   except:
     logging.error('Could not connect to leader smartplug (%s)', args.leader)
     time.sleep(1)
     continue
-  logging.info('Connected to leader smartplug (%s)', args.leader)
   break
+logging.info('Done.')
 
 prev_state = -1
 while True:
@@ -123,10 +124,8 @@ while True:
     logging.info('Current time is between %s and %s. Entering ignore mode.',
                  args.ignore_start, args.ignore_stop)
     logging.info('Closing leader smartplug (%s) socket.', args.leader)
-    try:
-      sock.close()
-    except:
-      logging.error('Error closing socket.')
+    sock.close()
+    logging.info('Done.')
     logging.info('Sleeping %d seconds until ignore period is over.',
                  seconds_until_ignore_end)
     time.sleep(seconds_until_ignore_end)
@@ -136,8 +135,9 @@ while True:
   try:
     relay_state = query_smartplug(sock)
   except:
+    logging.info('Connecting to leader smartplug (%s)', args.leader)
     sock = setup_socket(args.leader)
-    logging.info('Reconnected to leader smartplug (%s)', args.leader)
+    logging.info('Done.')
     continue
   if relay_state != prev_state and prev_state != -1:
     logging.info('Leader smartplug (%s) state changed to %d', args.leader,
