@@ -76,7 +76,7 @@ if not (args.on or args.off):
 
 try:
   sock = setup_socket(args.smartplug)
-except ConnectionRefusedError:
+except (ConnectionRefusedError, TimeoutError):
   print(f'UNKNOWN: smartplug {args.smartplug} is UNREACHABLE')
   sys.exit(3)
 
