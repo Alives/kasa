@@ -74,14 +74,20 @@ logging.basicConfig(
 if not (args.on or args.off):
   parser.error('Specify --on or --off.')
 
+error_msg = ''
 try:
   sock = setup_socket(args.smartplug)
-except (ConnectionRefusedError, TimeoutError):
-  print(f'UNKNOWN: smartplug {args.smartplug} is UNREACHABLE')
+  relay_state = query_smartplug(sock)
+except ConnectionRefusedError:
+  error_msg = 'is UNREACHABLE'
+except TimeoutError:
+  error_msg = 'TIMED OUT'
+
+if error_msg:
+  print(f'UNKNOWN: smartplug {args.smartplug} {error_msg}')
   sys.exit(3)
 
 logging.debug('Connected to smartplug (%s)', args.smartplug)
-relay_state = query_smartplug(sock)
 relay_state_str = STATES[relay_state].upper()
 logging.debug('State is "%s"', relay_state_str)
 status_str = f'smartplug {args.smartplug} is {relay_state_str}'
