@@ -75,7 +75,6 @@ def set_state(ip, desired_state):
   logging.info('Done.')
 
 
-setup_logging('/var/log/cron/plug_tracker.log')
 # https://github.com/softScheck/tplink-smartplug/blob/master/tplink-smarthome-commands.txt
 COMMANDS = {
     'state': {
@@ -96,7 +95,10 @@ parser.add_argument('-f', '--follower', required=True,
                     help='Smartplug hostname or IP address acting as follower.')
 parser.add_argument('-l', '--leader', required=True,
                     help='Smartplug hostname or IP address acting as leader.')
+parser.add_argument('--logfilename', default='plug_tracker.log')
 args = parser.parse_args()
+
+setup_logging(f'/var/log/cron/{args.logfilename}')
 
 if not (args.ignore_start and args.ignore_stop):
   parser.error('If specifying an ignore start or stop, both must be provided.')
